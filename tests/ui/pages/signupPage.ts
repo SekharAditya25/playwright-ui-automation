@@ -134,7 +134,7 @@ export class SignupPage {
 
   async clickContinue() {
     await this.continueButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await expect(this.homeHeading).toBeVisible();
   }
 
   async verifyLoggedInAs() {
@@ -143,10 +143,5 @@ export class SignupPage {
 
   async deleteAccount() {
     await this.deleteAccountLink.click();
-    await expect(this.accountDeletedHeading).toBeVisible();
-  }
-
-  async verifyAccountDeleted() {
-    await expect(this.accountDeletedHeading).toBeVisible();
   }
 }

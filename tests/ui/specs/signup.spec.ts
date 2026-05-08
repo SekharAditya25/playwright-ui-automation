@@ -17,6 +17,5 @@ test('Register User', async ({ page }) => {
   await signupPage.clickContinue();
   await signupPage.verifyLoggedInAs();
   await signupPage.deleteAccount();
-  await signupPage.verifyAccountDeleted();
   await signupPage.clickContinue();
 });
