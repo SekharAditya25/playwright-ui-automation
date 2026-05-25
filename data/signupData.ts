@@ -7,7 +7,7 @@ export type SignupData = {
   month: string;
   year: string;
   newsletter: boolean;
-  optin: boolean;
+  optIn: boolean;
   firstName: string;
   lastName: string;
   company: string;
@@ -28,7 +28,7 @@ const defaultSignupData: Omit<SignupData, 'email'> = {
   month: 'May',
   year: '1990',
   newsletter: true,
-  optin: true,
+  optIn: true,
   firstName: 'Sekhar',
   lastName: 'Chinni',
   company: 'QA Co',

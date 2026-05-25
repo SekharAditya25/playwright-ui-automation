@@ -17,7 +17,7 @@ export class SignupPage {
   readonly monthSelect: Locator;
   readonly yearSelect: Locator;
   readonly newsletterCheckbox: Locator;
-  readonly optinCheckbox: Locator;
+  readonly optInCheckbox: Locator;
   readonly firstNameInput: Locator;
   readonly lastNameInput: Locator;
   readonly companyInput: Locator;
@@ -51,7 +51,7 @@ export class SignupPage {
     this.monthSelect = page.locator('#months');
     this.yearSelect = page.locator('#years');
     this.newsletterCheckbox = page.locator('#newsletter');
-    this.optinCheckbox = page.locator('#optin');
+    this.optInCheckbox = page.locator('#optin');
     this.firstNameInput = page.locator('#first_name');
     this.lastNameInput = page.locator('#last_name');
     this.companyInput = page.locator('#company');
@@ -109,7 +109,7 @@ export class SignupPage {
     await this.yearSelect.selectOption(data.year);
 
     if (data.newsletter) await this.newsletterCheckbox.check();
-    if (data.optin) await this.optinCheckbox.check();
+    if (data.optIn) await this.optInCheckbox.check();
 
     await this.firstNameInput.fill(data.firstName);
     await this.lastNameInput.fill(data.lastName);
