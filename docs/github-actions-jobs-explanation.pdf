@@ -1,0 +1,72 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 3025 >>
+stream
+BT /F1 10 Tf 40 760 Td (GitHub Actions Jobs Explanation) Tj ET
+BT /F1 10 Tf 40 744 Td () Tj ET
+BT /F1 10 Tf 40 728 Td (This document describes the GitHub Actions workflows defined in this repository and explains the steps executed by each job.) Tj ET
+BT /F1 10 Tf 40 712 Td () Tj ET
+BT /F1 10 Tf 40 696 Td (1. Playwright Tests) Tj ET
+BT /F1 10 Tf 40 680 Td (Workflow file: .github/workflows/playwright.yml) Tj ET
+BT /F1 10 Tf 40 664 Td (Job name: test) Tj ET
+BT /F1 10 Tf 40 648 Td (Triggers: push and pull_request to main or master branches.) Tj ET
+BT /F1 10 Tf 40 632 Td () Tj ET
+BT /F1 10 Tf 40 616 Td (Job details:) Tj ET
+BT /F1 10 Tf 40 600 Td (- runs-on: ubuntu-latest) Tj ET
+BT /F1 10 Tf 40 584 Td (- timeout-minutes: 60) Tj ET
+BT /F1 10 Tf 40 568 Td () Tj ET
+BT /F1 10 Tf 40 552 Td (Steps:) Tj ET
+BT /F1 10 Tf 40 536 Td (1. Checkout repository: uses actions/checkout@v4 to clone the code.) Tj ET
+BT /F1 10 Tf 40 520 Td (2. Set up Node.js: uses actions/setup-node@v4 with node-version: lts/*.) Tj ET
+BT /F1 10 Tf 40 504 Td (3. Install dependencies: runs npm ci.) Tj ET
+BT /F1 10 Tf 40 488 Td (4. Install Playwright - Chromium: npx playwright install chromium --with-deps; timeout 15 minutes.) Tj ET
+BT /F1 10 Tf 40 472 Td (5. Install Playwright - Firefox: npx playwright install firefox --with-deps; timeout 25 minutes.) Tj ET
+BT /F1 10 Tf 40 456 Td (6. Install Playwright - WebKit: npx playwright install webkit --with-deps; timeout 25 minutes.) Tj ET
+BT /F1 10 Tf 40 440 Td (7. Run Playwright tests: npx playwright test --retries=2.) Tj ET
+BT /F1 10 Tf 40 424 Td (8. Upload artifact: uses actions/upload-artifact@v4 to save playwright-report/ with always\(\).) Tj ET
+BT /F1 10 Tf 40 408 Td () Tj ET
+BT /F1 10 Tf 40 392 Td (2. CodeQL) Tj ET
+BT /F1 10 Tf 40 376 Td (Workflow file: .github/workflows/codeql.yml) Tj ET
+BT /F1 10 Tf 40 360 Td (Job name: analyze) Tj ET
+BT /F1 10 Tf 40 344 Td (Triggers: push and pull_request to main or master, plus weekly schedule.) Tj ET
+BT /F1 10 Tf 40 328 Td () Tj ET
+BT /F1 10 Tf 40 312 Td (Job details:) Tj ET
+BT /F1 10 Tf 40 296 Td (- runs-on: ubuntu-latest) Tj ET
+BT /F1 10 Tf 40 280 Td () Tj ET
+BT /F1 10 Tf 40 264 Td (Steps:) Tj ET
+BT /F1 10 Tf 40 248 Td (1. Checkout repository: actions/checkout@v4.) Tj ET
+BT /F1 10 Tf 40 232 Td (2. Set up Node.js: actions/setup-node@v4 with node-version: lts/*.) Tj ET
+BT /F1 10 Tf 40 216 Td (3. Initialize CodeQL: github/codeql-action/init@v3 with languages: javascript.) Tj ET
+BT /F1 10 Tf 40 200 Td (4. Install dependencies: npm ci.) Tj ET
+BT /F1 10 Tf 40 184 Td (5. Run CodeQL analysis: github/codeql-action/analyze@v3.) Tj ET
+BT /F1 10 Tf 40 168 Td () Tj ET
+BT /F1 10 Tf 40 152 Td (3. GitHub Actions UI and Code Scanning Results) Tj ET
+BT /F1 10 Tf 40 136 Td (In GitHub UI you may see Playwright Tests, CodeQL, and Code scanning results.) Tj ET
+BT /F1 10 Tf 40 120 Td (The third item is a summary panel, not a separate repository workflow job.) Tj ET
+BT /F1 10 Tf 40 104 Td (Repository source defines two jobs: test and analyze.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000003317 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+3387
+%%EOF

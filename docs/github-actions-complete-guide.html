@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub Actions & CI/CD - Complete Guide</title>
+  <style>
+    * { margin: 0; padding: 0; }
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 32px; 
+      line-height: 1.7; 
+      color: #333; 
+      background: #f9f9f9;
+    }
+    h1, h2, h3, h4 { color: #0a3d62; }
+    h1 { margin-bottom: 0.4em; border-bottom: 3px solid #0a3d62; padding-bottom: 0.3em; }
+    h2 { margin-top: 1.4em; margin-bottom: 0.6em; }
+    h3 { margin-top: 1em; margin-bottom: 0.4em; color: #1e5f8f; }
+    h4 { margin-top: 0.8em; margin-bottom: 0.3em; color: #2f80ed; }
+    p { margin: 0.8em 0; }
+    .code { font-family: 'Courier New', monospace; background: #f0f4f8; padding: 3px 6px; border-radius: 3px; color: #d63031; font-weight: 500; }
+    .codeblock { 
+      background: #2c3e50; 
+      color: #ecf0f1; 
+      padding: 12px; 
+      border-radius: 5px; 
+      overflow-x: auto; 
+      margin: 10px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9em;
+      border-left: 4px solid #3498db;
+    }
+    .section { 
+      background: white; 
+      padding: 20px; 
+      margin: 20px 0; 
+      border-radius: 5px; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+    .step-list { margin-left: 1.5em; }
+    .step-item { margin: 10px 0; padding: 8px; background: #f5f9ff; border-left: 3px solid #3498db; border-radius: 3px; }
+    .note { 
+      background: #eef6ff; 
+      padding: 12px; 
+      border-left: 4px solid #2f80ed; 
+      margin: 16px 0; 
+      border-radius: 3px;
+    }
+    .important {
+      background: #fff3cd;
+      padding: 12px;
+      border-left: 4px solid #ff9800;
+      margin: 16px 0;
+      border-radius: 3px;
+    }
+    .qa-item {
+      background: white;
+      padding: 12px;
+      margin: 12px 0;
+      border-left: 4px solid #27ae60;
+      border-radius: 3px;
+    }
+    .question { font-weight: bold; color: #0a3d62; margin-bottom: 6px; }
+    .answer { color: #333; margin-left: 0.5em; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+    th, td { padding: 10px; text-align: left; border: 1px solid #ddd; }
+    th { background: #3498db; color: white; }
+    tr:nth-child(even) { background: #f9f9f9; }
+    .workflow-diagram { background: #f5f5f5; padding: 12px; border-radius: 5px; margin: 12px 0; border: 1px solid #ddd; }
+    ul li { margin: 6px 0; }
+  </style>
+</head>
+<body>
+
+<h1>📋 Complete Guide: GitHub Actions, CI/CD & Interview Questions</h1>
+<p style="font-size: 0.95em; color: #666;">Comprehensive explanation of GitHub Actions workflows, CI/CD concepts, and answers to common interview questions.</p>
+
+<!-- ============================================== -->
+<div class="section">
+<h2>📌 What is CI/CD? (Simple Explanation)</h2>
+<p><strong>Think of it like an automated quality checker for your code:</strong></p>
+<ul class="step-list">
+  <li><strong>CI (Continuous Integration):</strong> Every time someone pushes code, automatic tests run to check if the code is correct before merging</li>
+  <li><strong>CD (Continuous Deployment/Delivery):</strong> If tests pass, the code is automatically deployed to the live website</li>
+</ul>
+<p><strong>Real-world analogy:</strong> Before shipping a product, you don't just pack and send it. You test it multiple times. CI/CD automates this testing process.</p>
+<div class="note">
+  <strong>In this project:</strong> We use CI with GitHub Actions to run Playwright tests and CodeQL security scans on every push and pull request.
+</div>
+</div>
+
+<!-- ============================================== -->
+<div class="section">
+<h2>🔍 What is GitHub Actions? (Simple Explanation)</h2>
+<p><strong>In simple terms:</strong> GitHub Actions is like a robot that watches your code repository. When something happens (like you push code), the robot automatically runs tasks for you.</p>
+<h3>Key Components:</h3>
+<ul class="step-list">
+  <li><strong>Workflow:</strong> Instructions written in YAML file (stored in <span class="code">.github/workflows/</span>) that tell the robot what to do</li>
+  <li><strong>Event/Trigger:</strong> What makes the robot wake up (push code, create pull request, scheduled time)</li>
+  <li><strong>Job:</strong> A set of related tasks the robot needs to do</li>
+  <li><strong>Step:</strong> Individual commands within a job (like "run npm install")</li>
+  <li><strong>Action:</strong> Pre-made tools that other people shared (like downloading code, installing Node.js)</li>
+  <li><strong>Runner:</strong> The actual computer (Linux, Windows, macOS) where the robot runs</li>
+</ul>
+</div>
+
+<!-- ============================================== -->
+<div class="section">
+<h2>1️⃣ Playwright Tests Job - Detailed Explanation</h2>
+<p><strong>File:</strong> <span class="code">.github/workflows/playwright.yml</span></p>
+<p><strong>Purpose:</strong> Test your website in Chrome, Firefox, and Safari automatically whenever code changes.</p>
+
+<h3>📊 What Happens Step-by-Step</h3>
+<div class="workflow-diagram">
+<strong>Developer pushes code</strong> → GitHub triggers workflow → Get code → Install Node.js → Install packages → Install browsers → Run tests in 3 browsers → Report results
+</div>
+
+<h3>⚙️ Detailed Step Explanation:</h3>
+
+<div class="step-item">
+  <h4>Step 1: Checkout Repository</h4>
+  <p><strong>Command:</strong> <span class="code">actions/checkout@v4</span></p>
+  <p><strong>Simple explanation:</strong> Download your code from GitHub to the robot's computer so it can work with it.</p>
+  <p><strong>Why:</strong> The robot needs the code to test it.</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 2: Install Node.js</h4>
+  <p><strong>Command:</strong> <span class="code">actions/setup-node@v4</span> with <span class="code">lts/*</span> (latest stable)</p>
+  <p><strong>Simple explanation:</strong> Install Node.js (JavaScript engine) which Playwright needs.</p>
+  <p><strong>Why:</strong> Playwright is written in JavaScript and needs Node.js to run.</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 3: Install Project Dependencies</h4>
+  <p><strong>Command:</strong> <span class="code">npm ci</span> (Clean Install)</p>
+  <p><strong>Simple explanation:</strong> Download all libraries your project needs (from package.json)</p>
+  <p><strong>Why npm ci vs npm install?</strong></p>
+  <ul class="step-list">
+    <li><span class="code">npm install</span> - Used locally, may update packages</li>
+    <li><span class="code">npm ci</span> - Used in CI/CD, ensures exact same versions always</li>
+  </ul>
+</div>
+
+<div class="step-item">
+  <h4>Steps 4-6: Install Browsers</h4>
+  <p><strong>Commands:</strong></p>
+  <ul class="step-list">
+    <li><span class="code">npx playwright install chromium --with-deps</span> (15 min timeout)</li>
+    <li><span class="code">npx playwright install firefox --with-deps</span> (25 min timeout)</li>
+    <li><span class="code">npx playwright install webkit --with-deps</span> (25 min timeout)</li>
+  </ul>
+  <p><strong>Simple explanation:</strong> Download real browsers so Playwright can test your website in them.</p>
+  <p><strong>Why 3 browsers?</strong> To ensure your website works for everyone (Chrome users, Firefox users, Safari/Apple users)</p>
+  <p><strong>What is --with-deps?</strong> Also download system libraries these browsers need on Linux</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 7: Run Tests</h4>
+  <p><strong>Command:</strong> <span class="code">npx playwright test --retries=2</span></p>
+  <p><strong>Simple explanation:</strong> Actually run your test files and see if they pass.</p>
+  <p><strong>What is --retries=2?</strong> If a test fails, try it 2 more times. This handles "flaky" tests that randomly fail due to timing issues.</p>
+  <p><strong>Tests run in:</strong> All 3 browsers simultaneously (parallel execution for speed)</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 8: Save Test Report</h4>
+  <p><strong>Command:</strong> <span class="code">actions/upload-artifact@v4</span></p>
+  <p><strong>Simple explanation:</strong> Save the test report to GitHub so you can see details about which tests passed/failed.</p>
+  <p><strong>Special feature:</strong> Runs even if tests fail (important for debugging)</p>
+  <p><strong>Report kept for:</strong> 30 days</p>
+</div>
+
+<div class="important">
+  <strong>⏱️ Total Time:</strong> ~10-12 minutes for entire Playwright workflow
+</div>
+
+</div>
+
+<!-- ============================================== -->
+<div class="section">
+<h2>2️⃣ CodeQL Security Analysis - Detailed Explanation</h2>
+<p><strong>File:</strong> <span class="code">.github/workflows/codeql.yml</span></p>
+<p><strong>Purpose:</strong> Scan your code for security vulnerabilities without running it.</p>
+
+<h3>📊 What Happens</h3>
+<div class="workflow-diagram">
+<strong>Developer pushes code</strong> → GitHub triggers → Get code → Install Node → Setup CodeQL → Analyze code → Report security issues
+</div>
+
+<h3>⚙️ Detailed Explanation:</h3>
+
+<div class="step-item">
+  <h4>Step 1: Get Code</h4>
+  <p><strong>Command:</strong> <span class="code">actions/checkout@v4</span></p>
+  <p><strong>What it does:</strong> Download code to analyze</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 2: Install Node.js</h4>
+  <p><strong>Command:</strong> <span class="code">actions/setup-node@v4</span></p>
+  <p><strong>What it does:</strong> Install Node so CodeQL understands JavaScript/TypeScript</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 3: Initialize CodeQL</h4>
+  <p><strong>Command:</strong> <span class="code">github/codeql-action/init@v3</span> with <span class="code">languages: javascript</span></p>
+  <p><strong>What it does:</strong> Set up CodeQL to analyze JavaScript code</p>
+  <p><strong>What is CodeQL?</strong> A code analysis tool that finds security problems by looking for dangerous code patterns</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 4: Install Dependencies</h4>
+  <p><strong>Command:</strong> <span class="code">npm ci</span></p>
+  <p><strong>What it does:</strong> Install libraries so CodeQL can see how your code uses them</p>
+</div>
+
+<div class="step-item">
+  <h4>Step 5: Analyze Code</h4>
+  <p><strong>Command:</strong> <span class="code">github/codeql-action/analyze@v3</span></p>
+  <p><strong>What it does:</strong> Find security vulnerabilities</p>
+  <p><strong>What it finds:</strong> SQL injection, XSS attacks, password leaks, unsafe code patterns</p>
+</div>
+
+<div class="important">
+  <strong>⏱️ Total Time:</strong> ~8-15 minutes (longer because deep analysis is complex)
+</div>
+
+</div>
+
+<!-- ============================================== -->
+<div class="section">
+<h2>🎯 Interview Questions & Answers: CI/CD & GitHub Actions</h2>
+
+<h3>🔹 Basic Concepts</h3>
+
+<div class="qa-item">
+  <div class="question">Q1: What is CI/CD and why is it important?</div>
+  <div class="answer">
+    <p><strong>A:</strong> CI/CD is about automation:</p>
+    <ul class="step-list">
+      <li><strong>CI (Continuous Integration):</strong> Automatically test code after each commit</li>
+      <li><strong>CD (Deployment/Delivery):</strong> Automatically deploy tested code</li>
+    </ul>
+    <p><strong>Why important:</strong></p>
+    <ul class="step-list">
+      <li>Find bugs immediately (before users see them)</li>
+      <li>Reduce manual testing time by 90%</li>
+      <li>Deploy to production faster</li>
+      <li>Consistent, quality releases</li>
+      <li>Team can focus on feature development instead of testing</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q2: What are the benefits of using GitHub Actions vs other CI/CD tools (Jenkins, Travis CI, CircleCI)?</div>
+  <div class="answer">
+    <p><strong>A: GitHub Actions advantages:</strong></p>
+    <ul class="step-list">
+      <li><strong>Built into GitHub:</strong> No external account needed</li>
+      <li><strong>Free for public repos:</strong> Unlimited minutes</li>
+      <li><strong>Easy setup:</strong> Just create YAML files in your repo</li>
+      <li><strong>Marketplace:</strong> Thousands of pre-built actions to reuse</li>
+      <li><strong>No separate interface:</strong> Everything in GitHub repo</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q3: What are the main components of GitHub Actions workflow?</div>
+  <div class="answer">
+    <p><strong>A:</strong></p>
+    <table>
+      <tr>
+        <th>Component</th>
+        <th>What It Is</th>
+        <th>Example</th>
+      </tr>
+      <tr>
+        <td><strong>Workflow</strong></td>
+        <td>YAML file with automation rules</td>
+        <td><span class="code">playwright.yml</span></td>
+      </tr>
+      <tr>
+        <td><strong>Trigger/Event</strong></td>
+        <td>What starts the workflow</td>
+        <td><span class="code">push</span>, <span class="code">pull_request</span></td>
+      </tr>
+      <tr>
+        <td><strong>Job</strong></td>
+        <td>Container with multiple steps</td>
+        <td><span class="code">test</span>, <span class="code">analyze</span></td>
+      </tr>
+      <tr>
+        <td><strong>Step</strong></td>
+        <td>Individual command or action</td>
+        <td><span class="code">npm install</span></td>
+      </tr>
+      <tr>
+        <td><strong>Action</strong></td>
+        <td>Pre-built reusable code</td>
+        <td><span class="code">actions/checkout@v4</span></td>
+      </tr>
+      <tr>
+        <td><strong>Runner</strong></td>
+        <td>The computer running the job</td>
+        <td><span class="code">ubuntu-latest</span></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<h3>🔹 Workflow & Triggers</h3>
+
+<div class="qa-item">
+  <div class="question">Q4: Difference between "push" and "pull_request" triggers?</div>
+  <div class="answer">
+    <p><strong>A:</strong></p>
+    <ul class="step-list">
+      <li><strong>Push:</strong> Runs when code is pushed to main/master branch (after PR is merged)</li>
+      <li><strong>Pull Request:</strong> Runs when PR is created/updated (before merging)</li>
+    </ul>
+    <p><strong>In practice:</strong> Push on main ensures no broken code reaches production. PR checks ensure code is ready before merging.</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q5: What's the difference between job-level and step-level timeout?</div>
+  <div class="answer">
+    <p><strong>A:</strong></p>
+    <ul class="step-list">
+      <li><strong>Job timeout:</strong> Maximum time entire job can run (60 minutes in playwright.yml)</li>
+      <li><strong>Step timeout:</strong> Maximum time single step can run (15 min for Chromium install, 25 min for Firefox)</li>
+    </ul>
+    <p><strong>If exceeded:</strong> Job/step automatically stops and marked as failed</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q6: What does "if: ${{ always() }}" do?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Makes a step run even if previous steps fail.</p>
+    <p><strong>Example:</strong> Upload test report runs even if tests fail, so you can debug what went wrong</p>
+    <p><strong>Other conditions:</strong></p>
+    <ul class="step-list">
+      <li><span class="code">if: success()</span> - Run only if all previous steps passed</li>
+      <li><span class="code">if: failure()</span> - Run only if any step failed</li>
+      <li><span class="code">if: always()</span> - Run regardless of pass/fail</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q7: Can you run multiple jobs in parallel?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Yes, by default all jobs run in parallel unless you add <span class="code">needs</span> keyword.</p>
+    <p><strong>In this project:</strong> Playwright Tests and CodeQL run at same time (parallel)</p>
+    <p><strong>Total time is:</strong> Longest job (~15 min), not sum of both</p>
+  </div>
+</div>
+
+<h3>🔹 Testing & Dependencies</h3>
+
+<div class="qa-item">
+  <div class="question">Q8: npm ci vs npm install - when to use each?</div>
+  <div class="answer">
+    <p><strong>A:</strong></p>
+    <table>
+      <tr>
+        <th>Command</th>
+        <th>Purpose</th>
+        <th>When to Use</th>
+      </tr>
+      <tr>
+        <td><span class="code">npm install</span></td>
+        <td>Install and may update package versions</td>
+        <td>Local development</td>
+      </tr>
+      <tr>
+        <td><span class="code">npm ci</span></td>
+        <td>Install exact versions (clean install)</td>
+        <td>CI/CD pipelines</td>
+      </tr>
+    </table>
+    <p><strong>Why?</strong> In CI/CD, we want consistency. Everyone should test same versions.</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q9: What is Playwright and why use it in CI/CD?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Playwright is a tool that automates browser testing across Chrome, Firefox, Safari.</p>
+    <p><strong>Why use in CI/CD:</strong></p>
+    <ul class="step-list">
+      <li>Test real user interactions (clicking, typing, navigation)</li>
+      <li>Works on multiple browsers</li>
+      <li>Catches UI bugs that unit tests miss</li>
+      <li>Ensures actual users will have good experience</li>
+      <li>Fast and reliable</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q10: What does "--retries=2" do?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Makes failing tests retry up to 2 additional times.</p>
+    <p><strong>Why?</strong> Some tests fail randomly due to timing (network delay, element not ready). Retrying catches temporary failures.</p>
+    <p><strong>Example:</strong> Test fails first time (network slow), passes on retry (network recovered)</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q11: What is CodeQL and what security issues does it detect?</div>
+  <div class="answer">
+    <p><strong>A:</strong> CodeQL is GitHub's static analysis tool. It reads code without running it to find vulnerabilities.</p>
+    <p><strong>Security issues detected:</strong></p>
+    <ul class="step-list">
+      <li>SQL Injection (hackers add bad SQL commands)</li>
+      <li>Cross-Site Scripting (XSS attacks)</li>
+      <li>Sensitive data exposure (passwords in code)</li>
+      <li>Insecure encryption</li>
+      <li>Unsafe command execution</li>
+      <li>Weak authentication</li>
+    </ul>
+  </div>
+</div>
+
+<h3>🔹 Advanced Topics</h3>
+
+<div class="qa-item">
+  <div class="question">Q12: What are GitHub Actions Secrets and how do you use them?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Secrets are encrypted environment variables for sensitive data.</p>
+    <p><strong>Why?</strong> Never put passwords, API keys, tokens in code (they're public on GitHub)</p>
+    <p><strong>How to use:</strong></p>
+    <div class="codeblock">steps:
+  - run: echo "${{ secrets.MY_PASSWORD }}"</div>
+    <p><strong>Setup:</strong> GitHub repo Settings → Secrets and variables → New secret</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q13: How do you cache dependencies to speed up workflows?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Use <span class="code">actions/cache@v3</span> to save npm packages between runs.</p>
+    <p><strong>Benefits:</strong></p>
+    <ul class="step-list">
+      <li>First run slower (downloads packages), subsequent runs faster (uses cache)</li>
+      <li>Reduces GitHub server load</li>
+      <li>Faster deployments</li>
+    </ul>
+    <div class="codeblock">- uses: actions/cache@v3
+  with:
+    path: ~/.npm
+    key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}</div>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q14: What is a GitHub Actions matrix and how is it used?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Matrix runs a job multiple times with different configurations.</p>
+    <p><strong>Example:</strong> Test on Node 16, 18, 20</p>
+    <div class="codeblock">strategy:
+  matrix:
+    node-version: [16, 18, 20]
+
+steps:
+  - uses: actions/setup-node@v4
+    with:
+      node-version: ${{ matrix.node-version }}</div>
+    <p><strong>Result:</strong> Job runs 3 times, once per version</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q15: How do you trigger a workflow manually?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Add <span class="code">workflow_dispatch</span> trigger to YAML.</p>
+    <div class="codeblock">on:
+  push:
+  workflow_dispatch:</div>
+    <p><strong>Then:</strong> Go to GitHub Actions tab → Select workflow → "Run workflow" button</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q16: How do you organize multiple workflows in a project?</div>
+  <div class="answer">
+    <p><strong>A: Best practices:</strong></p>
+    <ul class="step-list">
+      <li>Create separate files for different purposes (test.yml, deploy.yml, security.yml)</li>
+      <li>Use descriptive names</li>
+      <li>Use job dependencies with <span class="code">needs</span> keyword</li>
+      <li>Reuse common logic with composite actions or workflow files</li>
+      <li>Document triggers and purpose in comments</li>
+    </ul>
+    <p><strong>In this project:</strong> We have separate files for testing and security (good practice)</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q17: How do you debug a failing workflow?</div>
+  <div class="answer">
+    <p><strong>A: Debugging steps:</strong></p>
+    <ul class="step-list">
+      <li>Click failed run in Actions tab</li>
+      <li>Find the step with red ❌ mark</li>
+      <li>Read error message carefully</li>
+      <li>Check if dependencies installed</li>
+      <li>Verify environment variables/secrets set</li>
+      <li>Test commands locally first</li>
+      <li>Enable debug logging: set <span class="code">ACTIONS_STEP_DEBUG=true</span> secret</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q18: What's the difference between GitHub Actions artifacts and releases?</div>
+  <div class="answer">
+    <p><strong>A:</strong></p>
+    <ul class="step-list">
+      <li><strong>Artifacts:</strong> Temporary (30 days) workflow outputs, stored in Actions tab</li>
+      <li><strong>Releases:</strong> Permanent version releases for users to download</li>
+    </ul>
+    <p><strong>In this project:</strong> Test reports are artifacts (for debugging)</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q19: How does GitHub Actions pricing work?</div>
+  <div class="answer">
+    <p><strong>A:</strong></p>
+    <table>
+      <tr>
+        <th>Repository Type</th>
+        <th>Free Minutes</th>
+        <th>Storage</th>
+      </tr>
+      <tr>
+        <td>Public repos</td>
+        <td>Unlimited</td>
+        <td>Unlimited</td>
+      </tr>
+      <tr>
+        <td>Private repos</td>
+        <td>2,000/month</td>
+        <td>500 MB artifacts</td>
+      </tr>
+    </table>
+    <p><strong>This project:</strong> Public repo = unlimited free minutes</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q20: How do you handle workflow failures and notifications?</div>
+  <div class="answer">
+    <p><strong>A: GitHub automatically:</strong></p>
+    <ul class="step-list">
+      <li>Shows ❌ red status if workflow fails</li>
+      <li>Sends email to committer</li>
+      <li>Blocks PR merge if required checks fail</li>
+    </ul>
+    <p><strong>Additional options:</strong></p>
+    <ul class="step-list">
+      <li>Slack integration for notifications</li>
+      <li>Custom notifications with actions</li>
+      <li>Set branch protection rules</li>
+    </ul>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q21: What are branch protection rules and how do they work with workflows?</div>
+  <div class="answer">
+    <p><strong>A:</strong> Branch protection rules prevent code merge until requirements are met.</p>
+    <p><strong>Common requirements:</strong></p>
+    <ul class="step-list">
+      <li>All workflow checks must pass (Playwright Tests ✅ and CodeQL ✅)</li>
+      <li>Code review approval required</li>
+      <li>No commits directly to main (must use PR)</li>
+    </ul>
+    <p><strong>Setup:</strong> GitHub repo Settings → Branches → Add rule</p>
+  </div>
+</div>
+
+<div class="qa-item">
+  <div class="question">Q22: What's the difference between `run` and `uses` in workflow steps?</div>
+  <div class="answer">
+    <p><strong>A:</strong></p>
+    <ul class="step-list">
+      <li><strong>run:</strong> Execute a shell command (your own code)</li>
+      <li><strong>uses:</strong> Use a pre-built action from marketplace</li>
+    </ul>
+    <div class="codeblock"># Using run
+- run: npm install
+
+# Using uses
+- uses: actions/checkout@v4</div>
+  </div>
+</div>
+
+</div>
+
+<!-- ============================================== -->
+<div class="section">
+<h2>📊 Your Project's Workflows Summary</h2>
+<table>
+  <tr>
+    <th>Workflow</th>
+    <th>Purpose</th>
+    <th>Triggers</th>
+    <th>Time</th>
+    <th>Tests</th>
+  </tr>
+  <tr>
+    <td><strong>Playwright</strong></td>
+    <td>Browser automation testing</td>
+    <td>Push & PR to main/master</td>
+    <td>10-12 min</td>
+    <td>Chrome, Firefox, Safari</td>
+  </tr>
+  <tr>
+    <td><strong>CodeQL</strong></td>
+    <td>Security vulnerability scanning</td>
+    <td>Push & PR + Weekly schedule</td>
+    <td>8-15 min</td>
+    <td>JavaScript/TypeScript</td>
+  </tr>
+</table>
+</div>
+
+<!-- ============================================== -->
+<div class="section">
+<h2>🎓 Key Takeaways</h2>
+<ul class="step-list">
+  <li>✅ GitHub Actions automates testing and security scanning on every code change</li>
+  <li>✅ Catches bugs before they reach production (prevents embarrassment and loss of trust)</li>
+  <li>✅ Both jobs run in parallel, total time is ~15 minutes</li>
+  <li>✅ Playwright tests real user interactions in 3 major browsers</li>
+  <li>✅ CodeQL finds security vulnerabilities before hackers do</li>
+  <li>✅ Failed tests/scans prevent code merge (quality gates protect production)</li>
+  <li>✅ This is a real example of DevOps best practices</li>
+  <li>✅ Learning GitHub Actions makes you valuable in any team</li>
+</ul>
+</div>
+
+</body>
+</html>

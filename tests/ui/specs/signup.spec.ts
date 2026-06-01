@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { SignupPage } from '../pages/signupPage';
+import { SignupPage } from '../../../pages/signupPage';
 import { createSignupData } from '../../../data/signupData';
 
 test('Register User', async ({ page }) => {

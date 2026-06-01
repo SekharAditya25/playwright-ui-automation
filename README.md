@@ -46,14 +46,116 @@ This repository is meant to support ongoing changes without rewriting the docume
 
 ## Project structure
 
-- `playwright.config.ts` — Playwright runtime configuration and browser targets
+- `pages/` — **Root-level page objects** (POM best practice)
 - `tests/ui/specs/` — UI test specs and scenario definitions
-- `tests/ui/pages/` — Reusable page object model classes
+- `tests/api/specs/` — API test specs (ready for expansion)
 - `data/` — Test data factories and shared data types
+- `utils/` — **Reusable utility helpers** (wait, assertions, browser actions, config)
+  - `waitHelpers.ts` — Common wait and polling utilities
+  - `commonAssertions.ts` — Centralized assertion methods
+  - `browserActions.ts` — Common browser interactions
+  - `testConfig.ts` — Configuration, constants, and retry logic
+  - `index.ts` — Central export point for all utilities
+- `config/` — Configuration assets
+- `fixtures/` — Shared Playwright fixtures
 - `playwright-report/` — Generated HTML reports
 - `test-results/` — Debugging artifacts from failed runs
-- `config/` — Future-ready configuration assets
-- `fixtures/` — Shared Playwright fixtures and helpers
+- `.github/workflows/` — **GitHub Actions CI/CD pipelines**
+  - `playwright.yml` — Automated testing workflow
+  - `codeql.yml` — Security scanning workflow
+- `docs/` — **Project documentation**
+  - `github-actions-complete-guide.html` — Complete CI/CD guide
+  - `github-actions-interview-qa.txt` — Interview Q&A reference
+- `POM_STRUCTURE.md` — Detailed Page Object Model documentation
+
+## Page Object Model (POM) Architecture
+
+This project implements **enterprise-grade POM** with clear separation of concerns:
+
+### Pages Folder (`pages/`)
+Contains page object classes with:
+- Element locators and selectors
+- Page-specific actions and methods
+- Proper encapsulation and reusability
+
+Example:
+```typescript
+import { SignupPage } from '../pages/signupPage';
+
+test('Register User', async ({ page }) => {
+  const signupPage = new SignupPage(page);
+  await signupPage.gotoHome();
+  await signupPage.navigateToSignupLogin();
+});
+```
+
+### Utils Folder (`utils/`)
+Provides reusable helpers organized by functionality:
+
+**WaitHelpers** — Common wait patterns
+```typescript
+import { WaitHelpers } from '../utils';
+await WaitHelpers.waitForPageLoad(page);
+await WaitHelpers.waitForElementToBeClickable(button);
+```
+
+**BrowserActions** — Common browser interactions
+```typescript
+import { BrowserActions } from '../utils';
+await BrowserActions.fillInput(emailField, 'test@example.com');
+await BrowserActions.clickElement(submitButton);
+```
+
+**CommonAssertions** — Centralized assertion methods
+```typescript
+import { CommonAssertions } from '../utils';
+await CommonAssertions.assertElementVisible(successMessage);
+await CommonAssertions.assertPageTitle(page, /Success/);
+```
+
+**TestConfig** — Environment configuration and constants
+```typescript
+import { TestConfig, TestDataConstants } from '../utils';
+const url = TestConfig.getPageUrl('/signup');
+const email = TestDataConstants.VALID_EMAIL;
+```
+
+## CI/CD & GitHub Actions
+
+This project includes automated testing and security scanning:
+
+### Workflows (`.github/workflows/`)
+- **Playwright Tests** (`playwright.yml`)
+  - Runs UI tests on every push and pull request
+  - Tests across Chrome, Firefox, and Safari browsers
+  - 2x automatic retries for flaky tests
+  - HTML report uploaded as artifact
+  - ⏱️ ~10-12 minutes
+
+- **CodeQL Security** (`codeql.yml`)
+  - Static code analysis for security vulnerabilities
+  - Detects SQL injection, XSS, insecure patterns
+  - Runs on push, PR, and weekly schedule
+  - ⏱️ ~8-15 minutes
+
+### Documentation (`docs/`)
+- **github-actions-complete-guide.html** — Visual guide with step-by-step explanations
+- **github-actions-interview-qa.txt** — 22 CI/CD interview Q&A with answers
+
+### Running Tests Locally
+```bash
+# Run all tests
+npm test
+
+# Run with UI mode (interactive)
+npm run test:ui
+
+# Run specific browser
+npx playwright test --project=chromium
+
+# Run with headed mode to see browser
+npx playwright test --headed
+```
 
 ## Prerequisites
 

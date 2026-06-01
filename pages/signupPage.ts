@@ -1,5 +1,5 @@
 import { expect, Locator, Page } from '@playwright/test';
-import type { SignupData } from '../../../data/signupData';
+import type { SignupData } from '../data/signupData';
 
 export class SignupPage {
   readonly page: Page;
