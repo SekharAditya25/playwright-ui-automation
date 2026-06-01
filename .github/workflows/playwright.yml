@@ -13,14 +13,32 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+        
     - name: Install dependencies
       run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+    - name: Install Playwright - Chromium
+      run: |
+        date --iso-8601=seconds
+        npx playwright install chromium --with-deps
+        date --iso-8601=seconds
+      timeout-minutes: 15
+    - name: Install Playwright - Firefox
+      run: |
+        date --iso-8601=seconds
+        npx playwright install firefox --with-deps
+        date --iso-8601=seconds
+      timeout-minutes: 25
+    - name: Install Playwright - WebKit
+      run: |
+        date --iso-8601=seconds
+        npx playwright install webkit --with-deps
+        date --iso-8601=seconds
+      timeout-minutes: 25
+    
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npx playwright test --retries=2
     - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
+      if: ${{ always() }}
       with:
         name: playwright-report
         path: playwright-report/

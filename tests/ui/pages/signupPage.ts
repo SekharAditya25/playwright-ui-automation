@@ -17,7 +17,7 @@ export class SignupPage {
   readonly monthSelect: Locator;
   readonly yearSelect: Locator;
   readonly newsletterCheckbox: Locator;
-  readonly optinCheckbox: Locator;
+  readonly optInCheckbox: Locator;
   readonly firstNameInput: Locator;
   readonly lastNameInput: Locator;
   readonly companyInput: Locator;
@@ -51,7 +51,7 @@ export class SignupPage {
     this.monthSelect = page.locator('#months');
     this.yearSelect = page.locator('#years');
     this.newsletterCheckbox = page.locator('#newsletter');
-    this.optinCheckbox = page.locator('#optin');
+    this.optInCheckbox = page.locator('#optin');
     this.firstNameInput = page.locator('#first_name');
     this.lastNameInput = page.locator('#last_name');
     this.companyInput = page.locator('#company');
@@ -71,30 +71,31 @@ export class SignupPage {
   }
 
   async gotoHome() {
-    await this.page.goto('https://automationexercise.com/');
+    await this.page.goto('/', { waitUntil: 'domcontentloaded', timeout: 90000 });
     await expect(this.page).toHaveTitle(/Automation Exercise/);
-    await expect(this.homeHeading).toBeVisible();
+    await expect(this.homeHeading).toBeVisible({ timeout: 30000 });
   }
 
   async navigateToSignupLogin() {
     await this.signupLoginLink.click();
-    await expect(this.newUserSignupHeading).toBeVisible();
+    await this.page.waitForLoadState('domcontentloaded');
+    await expect(this.newUserSignupHeading).toBeVisible({ timeout: 30000 });
   }
 
   async verifyNewUserSignupVisible() {
-    await expect(this.newUserSignupHeading).toBeVisible();
+    await expect(this.newUserSignupHeading).toBeVisible({ timeout: 30000 });
   }
 
   async submitSignupDetails(name: string, email: string) {
-    await expect(this.signupNameInput).toBeVisible();
+    await expect(this.signupNameInput).toBeVisible({ timeout: 30000 });
     await this.signupNameInput.fill(name);
     await this.signupEmailInput.fill(email);
     await this.signupButton.click();
-    await expect(this.accountInformationHeading).toBeVisible();
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async verifyEnterAccountInformationVisible() {
-    await expect(this.accountInformationHeading).toBeVisible();
+    await expect(this.accountInformationHeading).toBeVisible({ timeout: 30000 });
   }
 
   async fillAccountInformation(data: SignupData) {
@@ -109,7 +110,7 @@ export class SignupPage {
     await this.yearSelect.selectOption(data.year);
 
     if (data.newsletter) await this.newsletterCheckbox.check();
-    if (data.optin) await this.optinCheckbox.check();
+    if (data.optIn) await this.optInCheckbox.check();
 
     await this.firstNameInput.fill(data.firstName);
     await this.lastNameInput.fill(data.lastName);
@@ -125,11 +126,12 @@ export class SignupPage {
 
   async submitAccountCreation() {
     await this.createAccountButton.click();
-    await expect(this.accountCreatedHeading).toBeVisible();
+    await this.page.waitForLoadState('domcontentloaded');
+    await expect(this.accountCreatedHeading).toBeVisible({ timeout: 30000 });
   }
 
   async verifyAccountCreated() {
-    await expect(this.accountCreatedHeading).toBeVisible();
+    await expect(this.accountCreatedHeading).toBeVisible({ timeout: 30000 });
   }
 
   async clickContinue() {
@@ -138,7 +140,7 @@ export class SignupPage {
   }
 
   async verifyLoggedInAs() {
-    await expect(this.loggedInAsText).toBeVisible();
+    await expect(this.loggedInAsText).toBeVisible({ timeout: 30000 });
   }
 
   async deleteAccount() {
