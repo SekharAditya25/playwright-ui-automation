@@ -1,4 +1,7 @@
 name: "CodeQL"
+permissions:
+  contents: read
+  security-events: write
 on:
   push:
     branches: [ main, master ]
@@ -8,6 +11,7 @@ on:
     - cron: '0 0 * * 0'
 jobs:
   analyze:
+    if: github.event.pull_request == null || github.event.pull_request.head.repo.full_name == github.repository
     name: Analyze
     runs-on: ubuntu-latest
     steps:
